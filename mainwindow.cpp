@@ -3,14 +3,13 @@
 #include "ui_mainwindow.h"
 #include <QRandomGenerator>
 
-bool ok1 = false;
 int row = 0;
 bool crask = false;
 bool founder = false;
 bool clasd = false;
-QString temp1 = "0";
-int temp2 = 0;
-int temp3 = 0;
+QString temp1 = "-1";
+int temp2 = -1;
+int temp3 = -1;
 bool ter = false;
 
 MainWindow::MainWindow(QWidget *parent) : // Конструктор
@@ -25,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : // Конструктор
     ui->sizebox->setMaximum(1000000);
 }
 
-MainWindow::~MainWindow(){
+MainWindow::~MainWindow(){ // Деструктор
     delete ui;
 }
 
@@ -34,6 +33,9 @@ void MainWindow::clear(){
     ui->minlabel->setText("-");
     ui->maxlabel->setText("-");
     ui->medlabel->setText("-");
+    QString temp1 = "-1";
+    int temp2 = -1;
+    int temp3 = -1;
     ui->searchline->setText("");
     ui->includeedit->setText("");
     izmen();
@@ -57,33 +59,35 @@ void MainWindow::on_inputbutton_clicked(){
 }
 
 //Проверка элементов таблицы на корректные значения
-void MainWindow::problems(int *mas){ //
+bool MainWindow::problems(int *mas){
+    bool retval = true;
     if (ui->sizebox->value() == 0){
         QMessageBox::warning(this, "Ошибка", "Нулевой размер массива", QMessageBox::Ok);
-        ok1 = false;
+        retval = false;
         clear();
-    }else{
+    } else {
         for (int i = 0; i < row; i++){
             if (ui->arraytable->item(i, 0) == nullptr){
                 clear();
                 ui->arraytable->setItem(i, 0, new QTableWidgetItem(""));
-                ok1 = false;
+                retval = false;
                 QMessageBox::warning(this, "Ошибка", "Не все ячейки заполнены");
                 break;
             }
-            int box = ui->arraytable->item(i, 0)->text().toInt(&ok1);
-            if (!ok1){
+            int box = ui->arraytable->item(i, 0)->text().toInt(&retval);
+            if (!retval) {
                 clear();
                 QMessageBox::warning(this, "Ошибка", "Некорректное значение в ячейке(ах)");
                 break;
-            }else{
-                ok1 = true;
+            } else {
+                retval = true;
                 if (mas != NULL){
                     mas[i] = box;
                 }
             }
         }
     }
+    return retval;
 }
 
 //Перезаполнение таблицы изменённым массивом с удалёнными дубликатами
@@ -183,12 +187,11 @@ void MainWindow::shuffle(int size, int *mas){
 //Обезьянья сортировка - "реакция" на нажатую кнопку
 void MainWindow::on_monkeybutton_clicked(){
     if(row > 10){
-        clear();
+        clearsearch();
         QMessageBox::warning(this,"Ошибка", "Обезьянья сортировка принимает массив размера не более 10 элементов", QMessageBox::Ok);
     }else{
         int* mas_number = new int[row];
-        problems(mas_number);
-        if(ok1){
+        if(problems(mas_number)){
             while (correct(row, mas_number)){
                     shuffle(row, mas_number);
             }
@@ -230,12 +233,10 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
     bool ok;
     text.toInt(&ok);
 
-    if(ok){
+    if(text.toInt()){
+
         if(!founder)
             item -> setBackground(Qt:: white);
-            ui->minlabel->setText("-");
-            ui->maxlabel->setText("-");
-            ui->medlabel->setText("-");
             clasd = true;
     }
     else{
@@ -252,8 +253,7 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
 void MainWindow::on_raschbutton_clicked(){
     int* mas_number = new int[row];
     clasd = true;
-    problems(mas_number);
-    if(ok1){
+    if(problems(mas_number)){
         if(row >= 400000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
         }
@@ -282,15 +282,10 @@ void MainWindow::on_raschbutton_clicked(){
     delete [] mas_number;
     mas_number = NULL;
 
-    if(ter){
+    if(temp2 != -1){
         ui->medlabel->setText(temp1);
         ui->maxlabel->setNum(temp2);
         ui->minlabel->setNum(temp3);
-        ter = false;
-    }else{
-        ui->medlabel->setText("-");
-        ui->maxlabel->setText("-");
-        ui->minlabel->setText("-");
     }
 }
 
@@ -300,9 +295,8 @@ void MainWindow::on_gnombutton_clicked(){
     clasd = true;
     if(row > 100000){
         QMessageBox::warning(this,"Ошибка", "Слишком большое число");
-    }else{
-        problems(mas_number);
-        if(ok1){
+    } else {
+        if(problems(mas_number)){
             if(row > 50000){
                 QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
             }
@@ -359,8 +353,7 @@ void MainWindow::on_puzirbutton_clicked(){
         if(row > 25000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
         }
-        problems(mas_number);
-        if(ok1){
+        if(problems(mas_number)){
             int i = 0;
             int j;
             int vrem;
@@ -399,9 +392,8 @@ void MainWindow::on_puzirbutton_clicked(){
 void MainWindow::on_fastbutton_clicked(){
     int* mas_number = new int[row];
     clasd = true;
-    problems(mas_number);
 
-    if(ok1){
+    if(problems(mas_number)){
         if(row >= 400000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
         }
@@ -426,10 +418,17 @@ void MainWindow::on_fastbutton_clicked(){
 
 //"Реакция" на нажатую кнопку "Поиск"
 void MainWindow::on_searchbutton_clicked(){
+
+    ui->includeedit->setText("");
+    //ui->lable_searchCount->setText("");
+    for(int i = 0; i <row; i++){
+        input = true;
+        ui->arraytable->item(i,0)->setBackground(Qt::white);
+    }
+
     izmen();
     int* mas_number = new int[row];
-    problems(mas_number);
-    if(ok1){
+    if(problems(mas_number)){
         bool ok89;
         int kolvo = 0;
         bool sovpad = true;
@@ -493,7 +492,7 @@ void MainWindow::on_searchbutton_clicked(){
                 }
             }
             else{
-                QMessageBox::warning(this, "Ошибка", "Некорректный значения запрос при поиске");
+                QMessageBox::warning(this, "Ошибка", "Некорректный запрос значения при поиске");
                 founder = false;
             }
         }
@@ -539,8 +538,8 @@ void MainWindow::on_searchbutton_clicked(){
 //"Реакция" на нажатую кнопку "Удааление дубликатов"
 void MainWindow::on_delbutton_clicked(){
     int* mas_number = new int[row];
-    problems(mas_number);
-    if(ok1){
+
+    if(problems(mas_number)){
         bool sovpad = true;
         for(int i = 0; i < row-1; i++){
             if(mas_number[i] > mas_number[i+1]){
@@ -579,8 +578,8 @@ void MainWindow::on_delbutton_clicked(){
 //Расчёт минимума, максимума и среднего значения массива - алгоритм
 void MainWindow::values(){
     int* mas_number = new int[row];
-    problems(mas_number);
-    if(ok1){
+
+    if(problems(mas_number)){
         int minNumber = 1e9;
         int maxNumber = -1;
         qint64 avrNumber = 0;

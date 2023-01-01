@@ -28,7 +28,7 @@ private slots:
 
     void clear();
 
-    void problems(int *mas);
+    bool problems(int *mas);
 
     void sinch(int *mas);
 
