@@ -5,7 +5,6 @@
 #include <QDebug>
 
 bool founder = false;
-bool clasd = false;
 QString temp1 = "-1";
 int temp2 = -1;
 int temp3 = -1;
@@ -215,7 +214,6 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
     if(text.toInt()){
         if(!founder)
             item -> setBackground(Qt:: white);
-            clasd = true;
     }
     else{
         item->setBackground(Qt:: red);
@@ -230,7 +228,6 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
 //Сортировка рсчёской - "реакция" на нажатую кнопку
 void MainWindow::on_raschbutton_clicked(){
     int* mas_number = new int[getRowCount()];
-    clasd = true;
     if(problems(mas_number)){
         if(getRowCount() >= 400000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
@@ -270,7 +267,6 @@ void MainWindow::on_raschbutton_clicked(){
 //Сортировка гномом - "реакция" на нажатую кнопку
 void MainWindow::on_gnombutton_clicked(){
     int* mas_number = new int[getRowCount()];
-    clasd = true;
     if(getRowCount() > 100000){
         QMessageBox::warning(this,"Ошибка", "Слишком большое число");
     } else {
@@ -324,7 +320,6 @@ void MainWindow::on_gnombutton_clicked(){
 //Сортировка пузырьком - "реакция" на нажатую кнопку
 void MainWindow::on_puzirbutton_clicked(){
     int* mas_number = new int[getRowCount()];
-    clasd = true;
     if(getRowCount() > 50000){
         QMessageBox::warning(this,"Ошибка", "Слишком большие числа");
     }else{
@@ -369,7 +364,6 @@ void MainWindow::on_puzirbutton_clicked(){
 //Быстрая сортировка - "реакция" на нажатую кнопку
 void MainWindow::on_fastbutton_clicked(){
     int* mas_number = new int[getRowCount()];
-    clasd = true;
 
     if(problems(mas_number)){
         if(getRowCount() >= 400000){
