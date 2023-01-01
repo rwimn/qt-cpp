@@ -4,7 +4,7 @@
 #include <QRandomGenerator>
 #include <QDebug>
 
-bool founder = false;
+
 QString temp1 = "-1";
 int temp2 = -1;
 int temp3 = -1;
@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : // Конструктор
     ui->maxlabel->setText("-");
     ui->medlabel->setText("-");
     ui->sizebox->setMaximum(1000000);
+    fillState = false;
 }
 
 MainWindow::~MainWindow(){ // Деструктор
@@ -212,11 +213,10 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
     text.toInt(&ok);
 
     if(text.toInt()){
-        if(!founder)
-            item -> setBackground(Qt:: white);
+        item -> setBackground(Qt::white);
     }
     else{
-        item->setBackground(Qt:: red);
+        item->setBackground(Qt::red);
     }
 
     //ui->lable_searchCount->clear();
@@ -402,8 +402,7 @@ void MainWindow::clearLighting()
             text.toInt(&ok);
 
             if(text.toInt()){
-                if(!founder)
-                    item -> setBackground(Qt::white);
+                item->setBackground(Qt::white);
             } else {
                 item->setBackground(Qt::red);
             }
@@ -425,7 +424,6 @@ void MainWindow::on_searchbutton_clicked(){
         int kolvo = 0;
         bool sovpad = true;
         int found = ui->searchline->text().toInt(&ok89);
-        founder = true;
         QString otvet ="";
         int index[200];
         for(int i = 0; i < getRowCount()-1; i++){
@@ -485,7 +483,6 @@ void MainWindow::on_searchbutton_clicked(){
             }
             else{
                 QMessageBox::warning(this, "Ошибка", "Некорректный запрос значения при поиске");
-                founder = false;
             }
         }
         else{
@@ -494,7 +491,9 @@ void MainWindow::on_searchbutton_clicked(){
                     if(mas_number[i] == found){
                         index[kolvo] = i+1;
                         kolvo++;
+                        fillState = true;
                         ui->arraytable->item(i,0)->setBackground(Qt::green);
+                        fillState = false;
                         ui->medlabel->show();
                         ui->maxlabel->show();
                         ui->minlabel->show();
@@ -503,7 +502,6 @@ void MainWindow::on_searchbutton_clicked(){
             }
             else{
                 QMessageBox::warning(this, "Ошибка", "Некорректный запрос значения при поиске");
-                founder = false;
             }
          }
         if(ok89){
@@ -520,7 +518,6 @@ void MainWindow::on_searchbutton_clicked(){
                 QMessageBox::warning(this, "", "Нет чисел");
             }
         }
-        founder = false;
     }
 
     delete [] mas_number;

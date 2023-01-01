@@ -13,7 +13,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    bool fillState = false;
+    bool fillState;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
