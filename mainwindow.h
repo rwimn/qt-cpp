@@ -30,6 +30,8 @@ private slots:
 
     bool problems(int *mas);
 
+    int getRowCount();
+
     void sinch(int *mas);
 
     void quickSort(int left, int right, int *mas);

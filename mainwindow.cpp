@@ -3,7 +3,6 @@
 #include "ui_mainwindow.h"
 #include <QRandomGenerator>
 
-int row = 0;
 bool crask = false;
 bool founder = false;
 bool clasd = false;
@@ -52,7 +51,7 @@ void MainWindow::clearsearch(){
 void MainWindow::on_inputbutton_clicked(){
     clear();
     int size = ui->sizebox->value();
-    for(int i = 0; i < row; i++){
+    for(int i = 0; i < getRowCount(); i++){
         this->input = true;
         ui->arraytable->setItem(i,0,new QTableWidgetItem(QString::number(QRandomGenerator::global()->bounded(1, size))));
     }
@@ -66,7 +65,7 @@ bool MainWindow::problems(int *mas){
         retval = false;
         clear();
     } else {
-        for (int i = 0; i < row; i++){
+        for (int i = 0; i < getRowCount(); i++){
             if (ui->arraytable->item(i, 0) == nullptr){
                 clear();
                 ui->arraytable->setItem(i, 0, new QTableWidgetItem(""));
@@ -92,23 +91,26 @@ bool MainWindow::problems(int *mas){
 
 //Перезаполнение таблицы изменённым массивом с удалёнными дубликатами
 void MainWindow::sinch(int *mas){
-    for (int i = 0; i < row; i++){
+    for (int i = 0; i < getRowCount(); i++){
         QString numberText = QString::number(mas[i]);
         ui->arraytable->setItem(i, 0, new QTableWidgetItem(numberText));
     }
 }
 
 //"Реакция" на изменённый счётчик количества элементов в массиве
-void MainWindow::on_sizebox_valueChanged(int arg1){
-    row = arg1;
-    ui->arraytable->setRowCount(row);
+void MainWindow::on_sizebox_valueChanged(int newRowCount){
+    ui->arraytable->setRowCount(newRowCount);
     if (crask)
     {
-        ui->arraytable->setItem(row - 1, 0, new QTableWidgetItem(""));
-        ui->arraytable->setRowCount(row - 1);
-        ui->arraytable->setRowCount(row);
+        ui->arraytable->setItem(newRowCount - 1, 0, new QTableWidgetItem(""));
+        ui->arraytable->setRowCount(newRowCount - 1);
+        ui->arraytable->setRowCount(newRowCount);
     }
     clear();
+}
+
+int MainWindow::getRowCount() {
+    return ui->arraytable->rowCount();
 }
 
 //Быстрая сортировка - алгоритм
@@ -150,7 +152,7 @@ void MainWindow::izmen(){
     if(crask){
         ui->includeedit->setText("");
         //ui->lable_searchCount->setText("");
-        for(int i = 0; i <row; i++){
+        for(int i = 0; i <getRowCount(); i++){
             ui->arraytable->item(i,0)->setBackground(Qt::white);
         }
         crask = false;
@@ -186,14 +188,14 @@ void MainWindow::shuffle(int size, int *mas){
 
 //Обезьянья сортировка - "реакция" на нажатую кнопку
 void MainWindow::on_monkeybutton_clicked(){
-    if(row > 10){
+    if(getRowCount() > 10){
         clearsearch();
         QMessageBox::warning(this,"Ошибка", "Обезьянья сортировка принимает массив размера не более 10 элементов", QMessageBox::Ok);
     }else{
-        int* mas_number = new int[row];
+        int* mas_number = new int[getRowCount()];
         if(problems(mas_number)){
-            while (correct(row, mas_number)){
-                    shuffle(row, mas_number);
+            while (correct(getRowCount(), mas_number)){
+                    shuffle(getRowCount(), mas_number);
             }
             sinch(mas_number);
         }
@@ -251,13 +253,13 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
 
 //Сортировка рсчёской - "реакция" на нажатую кнопку
 void MainWindow::on_raschbutton_clicked(){
-    int* mas_number = new int[row];
+    int* mas_number = new int[getRowCount()];
     clasd = true;
     if(problems(mas_number)){
-        if(row >= 400000){
+        if(getRowCount() >= 400000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
         }
-        int shag = row;
+        int shag = getRowCount();
         bool flagUA = true;
         int vrem;
         while(shag > 1 or flagUA){
@@ -266,7 +268,7 @@ void MainWindow::on_raschbutton_clicked(){
             }
                 flagUA = false;
                 int i = 0;
-                while(i + shag < row){
+                while(i + shag < getRowCount()){
                     if(mas_number[i] > mas_number[i+shag]){
                         vrem = mas_number[i];
                         mas_number[i] = mas_number[i+shag];
@@ -291,13 +293,13 @@ void MainWindow::on_raschbutton_clicked(){
 
 //Сортировка гномом - "реакция" на нажатую кнопку
 void MainWindow::on_gnombutton_clicked(){
-    int* mas_number = new int[row];
+    int* mas_number = new int[getRowCount()];
     clasd = true;
-    if(row > 100000){
+    if(getRowCount() > 100000){
         QMessageBox::warning(this,"Ошибка", "Слишком большое число");
     } else {
         if(problems(mas_number)){
-            if(row > 50000){
+            if(getRowCount() > 50000){
                 QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
             }
             int i = 0;
@@ -305,7 +307,7 @@ void MainWindow::on_gnombutton_clicked(){
             int vrem;
             int vernis = 0;
             bool na_meste = true;
-            while (i < row){
+            while (i < getRowCount()){
                 if(i==0 or mas_number[i-1] <= mas_number[i]){
                     if(!na_meste){
                         na_meste = true;
@@ -345,21 +347,21 @@ void MainWindow::on_gnombutton_clicked(){
 
 //Сортировка пузырьком - "реакция" на нажатую кнопку
 void MainWindow::on_puzirbutton_clicked(){
-    int* mas_number = new int[row];
+    int* mas_number = new int[getRowCount()];
     clasd = true;
-    if(row > 50000){
+    if(getRowCount() > 50000){
         QMessageBox::warning(this,"Ошибка", "Слишком большие числа");
     }else{
-        if(row > 25000){
+        if(getRowCount() > 25000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
         }
         if(problems(mas_number)){
             int i = 0;
             int j;
             int vrem;
-            while(i < row-1){
+            while(i < getRowCount()-1){
                 j = i+1;
-                while(j < row){
+                while(j < getRowCount()){
                     if(mas_number[i] > mas_number[j]){
                         vrem = mas_number[i];
                         mas_number[i] = mas_number[j];
@@ -390,14 +392,14 @@ void MainWindow::on_puzirbutton_clicked(){
 
 //Быстрая сортировка - "реакция" на нажатую кнопку
 void MainWindow::on_fastbutton_clicked(){
-    int* mas_number = new int[row];
+    int* mas_number = new int[getRowCount()];
     clasd = true;
 
     if(problems(mas_number)){
-        if(row >= 400000){
+        if(getRowCount() >= 400000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
         }
-        quickSort(0, row-1, mas_number);
+        quickSort(0, getRowCount()-1, mas_number);
         sinch(mas_number);
     }
 
@@ -421,13 +423,13 @@ void MainWindow::on_searchbutton_clicked(){
 
     ui->includeedit->setText("");
     //ui->lable_searchCount->setText("");
-    for(int i = 0; i <row; i++){
+    for(int i = 0; i <getRowCount(); i++){
         input = true;
         ui->arraytable->item(i,0)->setBackground(Qt::white);
     }
 
     izmen();
-    int* mas_number = new int[row];
+    int* mas_number = new int[getRowCount()];
     if(problems(mas_number)){
         bool ok89;
         int kolvo = 0;
@@ -436,7 +438,7 @@ void MainWindow::on_searchbutton_clicked(){
         founder = true;
         QString otvet ="";
         int index[200];
-        for(int i = 0; i < row-1; i++){
+        for(int i = 0; i < getRowCount()-1; i++){
             if(mas_number[i] > mas_number[i+1]){
                 sovpad = false;
                 break;
@@ -446,7 +448,7 @@ void MainWindow::on_searchbutton_clicked(){
             if(ok89){
                 bool da = false;
                 int count = 0;
-                int del = floor(row/2);
+                int del = floor(getRowCount()/2);
                 int kray = del;
                 while(!da){
                     if(mas_number[del] == found){
@@ -467,7 +469,7 @@ void MainWindow::on_searchbutton_clicked(){
                             ui->minlabel->show();
                         }
 
-                        for(int i = del; i < row; i++){
+                        for(int i = del; i < getRowCount(); i++){
                             if(mas_number[i] == found){
                                 index[kolvo] = i+1;
                                 kolvo++;
@@ -485,7 +487,7 @@ void MainWindow::on_searchbutton_clicked(){
                         if(count < 2){
                             del ++;
                         }else{
-                            del += floor((row-del)/2);
+                            del += floor((getRowCount()-del)/2);
                             count++;
                         }
                     }
@@ -498,7 +500,7 @@ void MainWindow::on_searchbutton_clicked(){
         }
         else{
             if(ok89){
-                for(int i = 0; i < row; i++){
+                for(int i = 0; i < getRowCount(); i++){
                     if(mas_number[i] == found){
                         index[kolvo] = i+1;
                         kolvo++;
@@ -537,11 +539,11 @@ void MainWindow::on_searchbutton_clicked(){
 
 //"Реакция" на нажатую кнопку "Удааление дубликатов"
 void MainWindow::on_delbutton_clicked(){
-    int* mas_number = new int[row];
+    int* mas_number = new int[getRowCount()];
 
     if(problems(mas_number)){
         bool sovpad = true;
-        for(int i = 0; i < row-1; i++){
+        for(int i = 0; i < getRowCount()-1; i++){
             if(mas_number[i] > mas_number[i+1]){
                 sovpad = false;
                 break;
@@ -551,7 +553,7 @@ void MainWindow::on_delbutton_clicked(){
             int rows = 1;
             int point = mas_number[0];
             mas_number[0] = point;
-            for(int i = 1; i < row; i++){
+            for(int i = 1; i < getRowCount(); i++){
                 if(point == mas_number[i]){
                     continue;
                 }else{
@@ -577,14 +579,14 @@ void MainWindow::on_delbutton_clicked(){
 
 //Расчёт минимума, максимума и среднего значения массива - алгоритм
 void MainWindow::values(){
-    int* mas_number = new int[row];
+    int* mas_number = new int[getRowCount()];
 
     if(problems(mas_number)){
         int minNumber = 1e9;
         int maxNumber = -1;
         qint64 avrNumber = 0;
 
-        for(int i = 0; i < row; i ++){
+        for(int i = 0; i < getRowCount(); i ++){
             if(mas_number[i] < minNumber){
                 minNumber = mas_number[i];
             }
@@ -599,7 +601,7 @@ void MainWindow::values(){
         ui->maxlabel->show();
         ui->medlabel->show();
 
-        QString srAvg = QString::number(avrNumber/row);
+        QString srAvg = QString::number(avrNumber/getRowCount());
 
         ui->medlabel->setText(srAvg);
         ui->maxlabel->setNum(maxNumber);
