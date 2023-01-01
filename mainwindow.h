@@ -13,7 +13,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    bool input = false;
+    bool fillState = false;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -31,6 +31,8 @@ private slots:
     bool problems(int *mas);
 
     int getRowCount();
+
+    void clearLighting();
 
     void sinch(int *mas);
 

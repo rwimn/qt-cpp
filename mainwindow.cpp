@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QRandomGenerator>
+#include <QDebug>
 
 bool founder = false;
 bool clasd = false;
@@ -47,11 +48,16 @@ void MainWindow::clearsearch(){
 //"Реакция" на нажатую кнопку "Заполнение"
 void MainWindow::on_inputbutton_clicked(){
     clear();
-    int size = ui->sizebox->value();
-    for(int i = 0; i < getRowCount(); i++){
-        this->input = true;
-        ui->arraytable->setItem(i,0,new QTableWidgetItem(QString::number(QRandomGenerator::global()->bounded(1, size))));
+    int size = getRowCount();
+
+    fillState = true;
+    ui->arraytable->clear();
+
+    for(int i = 0; i < size; i++){
+        ui->arraytable->setItem(i, 0, new QTableWidgetItem(QString::number(QRandomGenerator::global()->bounded(1, size))));
     }
+
+    fillState = false;
 }
 
 //Проверка элементов таблицы на корректные значения
@@ -98,6 +104,7 @@ void MainWindow::sinch(int *mas){
 void MainWindow::on_sizebox_valueChanged(int newRowCount){
     ui->arraytable->setRowCount(newRowCount);
     clear();
+    clearLighting();
 }
 
 int MainWindow::getRowCount() {
@@ -197,15 +204,8 @@ void MainWindow::on_monkeybutton_clicked(){
 //"Реакция" на измённое значение в таблице (не относится к сортировкам)
 void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
 
-    if (this->input)
-    {
-        this->input = false;
+    if (this->fillState)
         return;
-    }
-    if (item == nullptr)
-    {
-        return;
-    }
 
     QString text = item -> text();
 
@@ -213,7 +213,6 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
     text.toInt(&ok);
 
     if(text.toInt()){
-
         if(!founder)
             item -> setBackground(Qt:: white);
             clasd = true;
@@ -395,15 +394,36 @@ void MainWindow::on_fastbutton_clicked(){
     }
 }
 
+// Очистка подсветки ранее выделенных строк
+void MainWindow::clearLighting()
+{
+    fillState = true;
+
+    for(int i = 0; i < getRowCount(); i++) {
+        auto item = ui->arraytable->item(i,0);
+        if (item != nullptr) {
+            QString text = item->text();
+
+            bool ok;
+            text.toInt(&ok);
+
+            if(text.toInt()){
+                if(!founder)
+                    item -> setBackground(Qt::white);
+            } else {
+                item->setBackground(Qt::red);
+            }
+        }
+    }
+
+    fillState = false;
+}
+
 //"Реакция" на нажатую кнопку "Поиск"
 void MainWindow::on_searchbutton_clicked(){
 
     ui->includeedit->setText("");
-    //ui->lable_searchCount->setText("");
-    for(int i = 0; i <getRowCount(); i++){
-        input = true;
-        ui->arraytable->item(i,0)->setBackground(Qt::white);
-    }
+    clearLighting();
 
     int* mas_number = new int[getRowCount()];
     if(problems(mas_number)){
