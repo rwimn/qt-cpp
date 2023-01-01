@@ -3,7 +3,6 @@
 #include "ui_mainwindow.h"
 #include <QRandomGenerator>
 
-bool crask = false;
 bool founder = false;
 bool clasd = false;
 QString temp1 = "-1";
@@ -37,14 +36,12 @@ void MainWindow::clear(){
     int temp3 = -1;
     ui->searchline->setText("");
     ui->includeedit->setText("");
-    izmen();
 }
 
 //"Очистка" значений поисковыых строки и вывода
 void MainWindow::clearsearch(){
     ui->searchline->setText("");
     ui->includeedit->setText("");
-    izmen();
 }
 
 //"Реакция" на нажатую кнопку "Заполнение"
@@ -100,12 +97,6 @@ void MainWindow::sinch(int *mas){
 //"Реакция" на изменённый счётчик количества элементов в массиве
 void MainWindow::on_sizebox_valueChanged(int newRowCount){
     ui->arraytable->setRowCount(newRowCount);
-    if (crask)
-    {
-        ui->arraytable->setItem(newRowCount - 1, 0, new QTableWidgetItem(""));
-        ui->arraytable->setRowCount(newRowCount - 1);
-        ui->arraytable->setRowCount(newRowCount);
-    }
     clear();
 }
 
@@ -144,18 +135,6 @@ void MainWindow::quickSort(int left, int right, int *mas){
     }
     if (right > pivot){
         quickSort(pivot + 1, right, mas);
-    }
-}
-
-//"Очистка" таблицы от зелёного цвета после search
-void MainWindow::izmen(){
-    if(crask){
-        ui->includeedit->setText("");
-        //ui->lable_searchCount->setText("");
-        for(int i = 0; i <getRowCount(); i++){
-            ui->arraytable->item(i,0)->setBackground(Qt::white);
-        }
-        crask = false;
     }
 }
 
@@ -227,8 +206,6 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
     {
         return;
     }
-
-
 
     QString text = item -> text();
 
@@ -428,7 +405,6 @@ void MainWindow::on_searchbutton_clicked(){
         ui->arraytable->item(i,0)->setBackground(Qt::white);
     }
 
-    izmen();
     int* mas_number = new int[getRowCount()];
     if(problems(mas_number)){
         bool ok89;

@@ -36,8 +36,6 @@ private slots:
 
     void quickSort(int left, int right, int *mas);
 
-    void izmen();
-
     bool correct(int size, int *mas);
 
     void shuffle(int size, int *mas);
