@@ -5,10 +5,6 @@
 #include <QDebug>
 
 
-QString temp1 = "-1";
-int temp2 = -1;
-int temp3 = -1;
-bool ter = false;
 
 MainWindow::MainWindow(QWidget *parent) : // Конструктор
     QMainWindow(parent),
@@ -32,9 +28,6 @@ void MainWindow::clear(){
     ui->minlabel->setText("-");
     ui->maxlabel->setText("-");
     ui->medlabel->setText("-");
-    QString temp1 = "-1";
-    int temp2 = -1;
-    int temp3 = -1;
     ui->searchline->setText("");
     ui->includeedit->setText("");
 }
@@ -189,16 +182,6 @@ void MainWindow::on_monkeybutton_clicked(){
         mas_number = NULL;
     }
 
-    if(ter){
-        ui->medlabel->setText(temp1);
-        ui->maxlabel->setNum(temp2);
-        ui->minlabel->setNum(temp3);
-        ter = false;
-    }else{
-        ui->medlabel->setText("-");
-        ui->maxlabel->setText("-");
-        ui->minlabel->setText("-");
-    }
 }
 
 //"Реакция" на измённое значение в таблице (не относится к сортировкам)
@@ -257,11 +240,6 @@ void MainWindow::on_raschbutton_clicked(){
     delete [] mas_number;
     mas_number = NULL;
 
-    if(temp2 != -1){
-        ui->medlabel->setText(temp1);
-        ui->maxlabel->setNum(temp2);
-        ui->minlabel->setNum(temp3);
-    }
 }
 
 //Сортировка гномом - "реакция" на нажатую кнопку
@@ -305,16 +283,6 @@ void MainWindow::on_gnombutton_clicked(){
     delete [] mas_number;
     mas_number = NULL;
 
-    if(ter){
-        ui->medlabel->setText(temp1);
-        ui->maxlabel->setNum(temp2);
-        ui->minlabel->setNum(temp3);
-        ter = false;
-    }else{
-        ui->medlabel->setText("-");
-        ui->maxlabel->setText("-");
-        ui->minlabel->setText("-");
-    }
 }
 
 //Сортировка пузырьком - "реакция" на нажатую кнопку
@@ -349,16 +317,6 @@ void MainWindow::on_puzirbutton_clicked(){
     delete [] mas_number;
     mas_number = NULL;
 
-    if(ter){
-        ui->medlabel->setText(temp1);
-        ui->maxlabel->setNum(temp2);
-        ui->minlabel->setNum(temp3);
-        ter = false;
-    }else{
-        ui->medlabel->setText("-");
-        ui->maxlabel->setText("-");
-        ui->minlabel->setText("-");
-    }
 }
 
 //Быстрая сортировка - "реакция" на нажатую кнопку
@@ -376,16 +334,6 @@ void MainWindow::on_fastbutton_clicked(){
     delete [] mas_number;
     mas_number = NULL;
 
-    if(ter){
-        ui->medlabel->setText(temp1);
-        ui->maxlabel->setNum(temp2);
-        ui->minlabel->setNum(temp3);
-        ter = false;
-    }else{
-        ui->medlabel->setText("-");
-        ui->maxlabel->setText("-");
-        ui->minlabel->setText("-");
-    }
 }
 
 // Очистка подсветки ранее выделенных строк
@@ -451,7 +399,9 @@ void MainWindow::on_searchbutton_clicked(){
                         for(int i = kray; i < del; i++){
                             index[kolvo] = i+1;
                             kolvo++;
+                            fillState = true;
                             ui->arraytable->item(i,0)->setBackground(Qt::green);
+                            fillState = false;
                             ui->medlabel->show();
                             ui->maxlabel->show();
                             ui->minlabel->show();
@@ -461,8 +411,10 @@ void MainWindow::on_searchbutton_clicked(){
                             if(mas_number[i] == found){
                                 index[kolvo] = i+1;
                                 kolvo++;
+                                fillState = true;
                                 ui->arraytable->item(i,0)->setBackground(Qt::green);
                                 ui->medlabel->show();
+                                fillState = false;
                                 ui->maxlabel->show();
                                 ui->minlabel->show();
                             }else{
@@ -593,10 +545,6 @@ void MainWindow::values(){
         ui->medlabel->setText(srAvg);
         ui->maxlabel->setNum(maxNumber);
         ui->minlabel->setNum(minNumber);
-        temp1 = srAvg;
-        temp2 = maxNumber;
-        temp3 = minNumber;
-        ter = true;
     }
 
     delete [] mas_number;
