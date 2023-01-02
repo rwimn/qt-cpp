@@ -373,7 +373,7 @@ void MainWindow::on_searchbutton_clicked(){
         bool sovpad = true;
         int found = ui->searchline->text().toInt(&ok89);
         QString otvet ="";
-        int index[200];
+        int index[20000];
         for(int i = 0; i < getRowCount()-1; i++){
             if(mas_number[i] > mas_number[i+1]){
                 sovpad = false;
@@ -382,56 +382,42 @@ void MainWindow::on_searchbutton_clicked(){
         }
         if(sovpad){
             if(ok89){
-                bool da = false;
-                int count = 0;
-                int del = floor(getRowCount()/2);
-                int kray = del;
-                while(!da){
-                    if(mas_number[del] == found){
-                        da = true;
-                        for(int i = del; i >-1; i--){
-                            if(mas_number[i] == found){
-                                kray = i;
-                            }else{
-                                break;
-                            }
-                        }
-                        for(int i = kray; i < del; i++){
-                            index[kolvo] = i+1;
-                            kolvo++;
-                            fillState = true;
-                            ui->arraytable->item(i,0)->setBackground(Qt::green);
-                            fillState = false;
-                            ui->medlabel->show();
-                            ui->maxlabel->show();
-                            ui->minlabel->show();
-                        }
+                int left = 0;
+                int right = getRowCount() - 1;
+                int med = (left + right) / 2;
 
-                        for(int i = del; i < getRowCount(); i++){
-                            if(mas_number[i] == found){
-                                index[kolvo] = i+1;
-                                kolvo++;
-                                fillState = true;
-                                ui->arraytable->item(i,0)->setBackground(Qt::green);
-                                ui->medlabel->show();
-                                fillState = false;
-                                ui->maxlabel->show();
-                                ui->minlabel->show();
-                            }else{
-                                break;
-                            }
-                        }
-                    }else if(mas_number[del] > found){
-                        del = floor(del/2);
-                    }else if(mas_number[del] < found){
-                        if(count < 2){
-                            del ++;
-                        }else{
-                            del += floor((getRowCount()-del)/2);
-                            count++;
+                while (left <= right && found != mas_number[med])
+                {
+                    if (found < med)
+                    {
+                        right = med - 1;
+                    }
+                    else
+                    {
+                        left = med + 1;
+                    }
+                    med = (left + right) / 2;
+                }
+                med = (left + right) / 2;
+                if (found == mas_number[med])
+                {
+                    for (int i = 0; i < med + 1; i++)
+                    {
+                        if (mas_number[i] == found)
+                        {
+                            fillState = true;
+                            ui->arraytable->item(i, 0)->setBackground(Qt::green);
+                            index[kolvo] = i + 1;
+                            kolvo ++;
+
                         }
                     }
                 }
+                else
+                {
+                    ok89 = false;
+                }
+
             }
             else{
                 QMessageBox::warning(this, "Ошибка", "Некорректный запрос значения при поиске");
@@ -469,6 +455,11 @@ void MainWindow::on_searchbutton_clicked(){
                 clearsearch();
                 QMessageBox::warning(this, "", "Нет чисел");
             }
+        }
+        else
+        {
+            clearsearch();
+            QMessageBox::warning(this, "", "Нет чисел");
         }
     }
 
