@@ -491,8 +491,10 @@ void MainWindow::on_delbutton_clicked(){
 
     if(problems(mas_number)){
         bool sovpad = true;
-        for(int i = 0; i < getRowCount()-1; i++){
-            if(mas_number[i] > mas_number[i+1]){
+        for(int i = 0; i < getRowCount()-1; i++)
+        {
+            if(mas_number[i] > mas_number[i+1])
+            {
                 sovpad = false;
                 break;
             }
@@ -501,10 +503,14 @@ void MainWindow::on_delbutton_clicked(){
             int rows = 1;
             int point = mas_number[0];
             mas_number[0] = point;
-            for(int i = 1; i < getRowCount(); i++){
-                if(point == mas_number[i]){
+            for(int i = 1; i < getRowCount(); i++)
+            {
+                if(point == mas_number[i])
+                {
                     continue;
-                }else{
+                }
+                else
+                {
                     point = mas_number[i];
                     mas_number[rows] = point;
                     rows++;
@@ -512,12 +518,18 @@ void MainWindow::on_delbutton_clicked(){
             }
             fillState = true;
             ui->sizebox->setValue(rows);
-            for (int i = 0; i < rows; i++){
+            ui->arraytable->setRowCount(rows);
+            fillState = false;
+            for (int i = 0; i < rows; i++)
+            {
                 QString numberText = QString::number(mas_number[i]);
                 fillState = true;
                 ui->arraytable->setItem(i, 0, new QTableWidgetItem(numberText));
+                fillState = false;
             }
-        }else{
+        }
+        else
+        {
             QMessageBox::warning(this, "Ошибка", "Необходимо отсортировать массив");
         }
 
@@ -532,13 +544,16 @@ void MainWindow::on_delbutton_clicked(){
 void MainWindow::values(){
     int* mas_number = new int[getRowCount()];
 
-    if(problems(mas_number)){
+    if(problems(mas_number))
+    {
         int minNumber = 1e9;
         int maxNumber = -1;
         qint64 avrNumber = 0;
 
-        for(int i = 0; i < getRowCount(); i ++){
-            if(mas_number[i] < minNumber){
+        for(int i = 0; i < getRowCount(); i ++)
+        {
+            if(mas_number[i] < minNumber)
+            {
                 minNumber = mas_number[i];
             }
             if(mas_number[i] > maxNumber){
