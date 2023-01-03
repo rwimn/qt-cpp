@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : // Конструктор
 {
     ui->setupUi(this);
     ui->arraytable->setColumnCount(1);
-    ui->minlabel->setText("-");
+    ui->minlabel->setText("-123");
     ui->maxlabel->setText("-");
     ui->medlabel->setText("-");
     ui->sizebox->setMaximum(1000000);
@@ -95,6 +95,11 @@ void MainWindow::sinch(int *mas){
 
 //"Реакция" на изменённый счётчик количества элементов в массиве
 void MainWindow::on_sizebox_valueChanged(int newRowCount){
+    if (fillState)
+    {
+        fillState = false;
+        return;
+    }
     ui->arraytable->setRowCount(newRowCount);
     clear();
     clearLighting();
@@ -374,8 +379,10 @@ void MainWindow::on_searchbutton_clicked(){
         int found = ui->searchline->text().toInt(&ok89);
         QString otvet ="";
         int index[20000];
-        for(int i = 0; i < getRowCount()-1; i++){
-            if(mas_number[i] > mas_number[i+1]){
+        for(int i = 0; i < getRowCount()-1; i++)
+        {
+            if(mas_number[i] > mas_number[i+1])
+            {
                 sovpad = false;
                 break;
             }
@@ -388,25 +395,32 @@ void MainWindow::on_searchbutton_clicked(){
 
                 while (left <= right && found != mas_number[med])
                 {
-                    if (found < med)
+                    med = (left + right) / 2;
+                    if (found < mas_number[med])
                     {
                         right = med - 1;
                     }
-                    else
+                    else if (found > mas_number[med])
                     {
                         left = med + 1;
                     }
-                    med = (left + right) / 2;
+                    else
+                    {
+                        break;
+                    }
+
                 }
-                med = (left + right) / 2;
+                //med = (left + right) / 2;
+                //qDebug () << med << " " << left << "-" << right;
                 if (found == mas_number[med])
                 {
-                    for (int i = 0; i < med + 1; i++)
+                    for (int i = 0; i < getRowCount(); i++)
                     {
                         if (mas_number[i] == found)
                         {
                             fillState = true;
                             ui->arraytable->item(i, 0)->setBackground(Qt::green);
+                            fillState = false;
                             index[kolvo] = i + 1;
                             kolvo ++;
 
@@ -423,10 +437,14 @@ void MainWindow::on_searchbutton_clicked(){
                 QMessageBox::warning(this, "Ошибка", "Некорректный запрос значения при поиске");
             }
         }
-        else{
-            if(ok89){
-                for(int i = 0; i < getRowCount(); i++){
-                    if(mas_number[i] == found){
+        else
+        {
+            if(ok89)
+            {
+                for(int i = 0; i < getRowCount(); i++)
+                {
+                    if(mas_number[i] == found)
+                    {
                         index[kolvo] = i+1;
                         kolvo++;
                         fillState = true;
@@ -492,9 +510,11 @@ void MainWindow::on_delbutton_clicked(){
                     rows++;
                 }
             }
+            fillState = true;
             ui->sizebox->setValue(rows);
             for (int i = 0; i < rows; i++){
                 QString numberText = QString::number(mas_number[i]);
+                fillState = true;
                 ui->arraytable->setItem(i, 0, new QTableWidgetItem(numberText));
             }
         }else{
@@ -502,7 +522,8 @@ void MainWindow::on_delbutton_clicked(){
         }
 
     }
-
+    clearsearch();
+    ui->medlabel->setText("-");
     delete [] mas_number;
     mas_number = NULL;
 }
