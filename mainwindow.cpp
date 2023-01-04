@@ -47,9 +47,10 @@ void MainWindow::on_inputbutton_clicked(){
     ui->arraytable->clear();
 
     for(int i = 0; i < size; i++){
+        fillState = true;
         ui->arraytable->setItem(i, 0, new QTableWidgetItem(QString::number(QRandomGenerator::global()->bounded(1, size))));
     }
-
+    clearLighting();
     fillState = false;
 }
 
@@ -194,7 +195,7 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
 
     if (this->fillState)
         return;
-
+    clearLighting();
     QString text = item -> text();
 
     bool ok;
@@ -217,7 +218,7 @@ void MainWindow::on_arraytable_itemChanged(QTableWidgetItem *item){
 void MainWindow::on_raschbutton_clicked(){
     int* mas_number = new int[getRowCount()];
     if(problems(mas_number)){
-        if(getRowCount() >= 400000){
+        if(getRowCount() >= 40000){
             QMessageBox::information(this, "Внимание", "Этот процесс будет длиться 5 или более секунд");
         }
         int shag = getRowCount();
